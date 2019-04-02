@@ -18,7 +18,7 @@ provider:
 
 functions:
   seeTopicMembers:
-    handler: src/admin/handler.seeTopicMembers
+    handler: src/admin/topic.seeTopicMembers
     events:
       - http:
           method: get
@@ -27,7 +27,7 @@ functions:
       REDIS_HOST: ${env:REDIS_HOST}
       REDIS_PASSWORD: ${env:REDIS_PASSWORD}
   deleteTopic:
-    handler: src/admin/handler.deleteTopic
+    handler: src/admin/topic.deleteTopic
     events:
       - http:
           method: delete
@@ -36,7 +36,7 @@ functions:
       REDIS_HOST: ${env:REDIS_HOST}
       REDIS_PASSWORD: ${env:REDIS_PASSWORD}
   connect:
-    handler: src/ws/handler.connect
+    handler: src/ws/connection.connect
     events:
       - websocket:
           route: $connect
@@ -44,7 +44,7 @@ functions:
       REDIS_HOST: ${env:REDIS_HOST}
       REDIS_PASSWORD: ${env:REDIS_PASSWORD}
   disconnect:
-    handler: src/ws/handler.disconnect
+    handler: src/ws/connection.disconnect
     events:
       - websocket:
           route: $disconnect
@@ -52,7 +52,7 @@ functions:
       REDIS_HOST: ${env:REDIS_HOST}
       REDIS_PASSWORD: ${env:REDIS_PASSWORD}
   defaultMessages:
-    handler: src/ws/handler.defaultMessages
+    handler: src/ws/connection.defaultMessages
     events:
       - websocket:
           route: $default
@@ -60,7 +60,7 @@ functions:
       REDIS_HOST: ${env:REDIS_HOST}
       REDIS_PASSWORD: ${env:REDIS_PASSWORD}
   subscribeTopic:
-    handler: src/ws/handler.subscribeTopic
+    handler: src/ws/topic.subscribeTopic
     events:
       - websocket:
           route: subscribe
@@ -68,7 +68,7 @@ functions:
       REDIS_HOST: ${env:REDIS_HOST}
       REDIS_PASSWORD: ${env:REDIS_PASSWORD}
   unsubscribeTopic:
-    handler: src/ws/handler.unsubscribeTopic
+    handler: src/ws/topic.unsubscribeTopic
     events:
       - websocket:
           route: unsubscribe
@@ -76,7 +76,7 @@ functions:
       REDIS_HOST: ${env:REDIS_HOST}
       REDIS_PASSWORD: ${env:REDIS_PASSWORD}
   broadcastMessage:
-    handler: src/ws/handler.broadcastMessage
+    handler: src/ws/broadcast.broadcastMessage
     events:
       - websocket:
           route: broadcast

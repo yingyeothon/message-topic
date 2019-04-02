@@ -1,7 +1,7 @@
 {
-  "name": "yyt-chat",
-  "version": "1.0.0",
-  "description": "Serverless webpack example using Typescript",
+  "name": "yyt-message-topic",
+  "version": "0.1.0",
+  "description": "A message broadcaster between subscribers within a same topic via AWS WebSockets API",
   "main": "handler.js",
   "scripts": {
     "build": "sls package",
@@ -25,10 +25,12 @@
     "webpack": "^4.5.0",
     "wscat": "^2.2.1"
   },
-  "author": "The serverless webpack authors (https://github.com/elastic-coders/serverless-webpack)",
+  "author": "jaeyoung.choi <lactrious@gmail.com>",
   "license": "MIT",
   "dependencies": {
     "hiredis": "^0.5.0",
+    "mem": "^4.3.0",
+    "p-limit": "^2.2.0",
     "redis": "^2.8.0"
   },
   "prettier": {

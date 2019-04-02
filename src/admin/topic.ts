@@ -1,8 +1,10 @@
 import { APIGatewayProxyHandler } from 'aws-lambda';
-import redis from '../utils/redis';
+import { getTopicRepo } from '../data/topic';
 
 export const seeTopicMembers: APIGatewayProxyHandler = async req => {
-  const members = await redis.getTopicMembers(req.pathParameters.topic);
+  const members = await getTopicRepo().getTopicMembers(
+    req.pathParameters.topic,
+  );
   return {
     statusCode: 200,
     body: JSON.stringify(members),
@@ -10,7 +12,7 @@ export const seeTopicMembers: APIGatewayProxyHandler = async req => {
 };
 
 export const deleteTopic: APIGatewayProxyHandler = async req => {
-  const deleted = await redis.deleteTopic(req.pathParameters.topic);
+  const deleted = await getTopicRepo().deleteTopic(req.pathParameters.topic);
   return {
     statusCode: 200,
     body: JSON.stringify(deleted),

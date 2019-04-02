@@ -1,6 +1,6 @@
-import * as AWS from 'aws-sdk';
 import { APIGatewayProxyHandler, APIGatewayProxyEvent } from 'aws-lambda';
-import redis from '../utils/redis';
+import { getUserRepo } from '../data/user';
+import { replyApi } from '../utils/ws';
 
 export const handshakeApi = (
   handler: (args: {
@@ -16,11 +16,16 @@ export const handshakeApi = (
   }
   try {
     console.info(`HandshakeApi`, user, event.requestContext.connectionId);
-    await handler({
+    const response = await handler({
       user,
       connectionId: event.requestContext.connectionId,
       event,
     });
+    if (response) {
+      await replyApi(event)(
+        typeof response === 'object' ? JSON.stringify(response) : response,
+      );
+    }
     return { statusCode: 200, body: `OK` };
   } catch (error) {
     console.error(`HandshakeApi`, `error`, user, error);
@@ -28,14 +33,7 @@ export const handshakeApi = (
   }
 };
 
-export const newApigwManagementApi = (event: APIGatewayProxyEvent) =>
-  new AWS.ApiGatewayManagementApi({
-    apiVersion: '2018-11-29',
-    endpoint:
-      event.requestContext.domainName + '/' + event.requestContext.stage,
-  });
-
-export interface Message {
+interface Message {
   action: string;
 }
 
@@ -47,7 +45,7 @@ export const userApi = <M extends Message>(
     event: APIGatewayProxyEvent;
   }) => Promise<any>,
 ): APIGatewayProxyHandler => async event => {
-  const user = await redis.getUserFromConnectionId(
+  const user = await getUserRepo().getUserFromConnectionId(
     event.requestContext.connectionId,
   );
   if (!user) {
@@ -61,13 +59,18 @@ export const userApi = <M extends Message>(
   }
   try {
     console.log(`UserApi`, user, event.requestContext.connectionId, message);
-    const result = await handler({
+    const response = await handler({
       user,
       connectionId: event.requestContext.connectionId,
       message,
       event,
     });
-    console.log(`UserApi`, user, result);
+    console.log(`UserApi`, user, response);
+    if (response) {
+      await replyApi(event)(
+        typeof response === 'object' ? JSON.stringify(response) : response,
+      );
+    }
     return { statusCode: 200, body: 'OK' };
   } catch (error) {
     console.error(`UserApi`, user, error);
