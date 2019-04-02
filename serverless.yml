@@ -17,38 +17,69 @@ provider:
         - 'arn:aws:execute-api:*:*:**/@connections/*'
 
 functions:
-  redisInfo:
-    handler: handler.redisInfo
+  seeTopicMembers:
+    handler: src/admin/handler.seeTopicMembers
     events:
       - http:
           method: get
-          path: redis
+          path: redis/{topic}
     environment:
       REDIS_HOST: ${env:REDIS_HOST}
       REDIS_PASSWORD: ${env:REDIS_PASSWORD}
-  connection:
-    handler: handler.connection
+  deleteTopic:
+    handler: src/admin/handler.deleteTopic
+    events:
+      - http:
+          method: delete
+          path: redis/{topic}
+    environment:
+      REDIS_HOST: ${env:REDIS_HOST}
+      REDIS_PASSWORD: ${env:REDIS_PASSWORD}
+  connect:
+    handler: src/ws/handler.connect
     events:
       - websocket:
           route: $connect
+    environment:
+      REDIS_HOST: ${env:REDIS_HOST}
+      REDIS_PASSWORD: ${env:REDIS_PASSWORD}
+  disconnect:
+    handler: src/ws/handler.disconnect
+    events:
       - websocket:
           route: $disconnect
     environment:
       REDIS_HOST: ${env:REDIS_HOST}
       REDIS_PASSWORD: ${env:REDIS_PASSWORD}
   defaultMessages:
-    handler: handler.defaultMessages
+    handler: src/ws/handler.defaultMessages
     events:
       - websocket:
           route: $default
     environment:
       REDIS_HOST: ${env:REDIS_HOST}
       REDIS_PASSWORD: ${env:REDIS_PASSWORD}
-  sendMessage:
-    handler: handler.sendMessage
+  subscribeTopic:
+    handler: src/ws/handler.subscribeTopic
     events:
       - websocket:
-          route: sendMessage
+          route: subscribe
+    environment:
+      REDIS_HOST: ${env:REDIS_HOST}
+      REDIS_PASSWORD: ${env:REDIS_PASSWORD}
+  unsubscribeTopic:
+    handler: src/ws/handler.unsubscribeTopic
+    events:
+      - websocket:
+          route: unsubscribe
+    environment:
+      REDIS_HOST: ${env:REDIS_HOST}
+      REDIS_PASSWORD: ${env:REDIS_PASSWORD}
+  broadcastMessage:
+    handler: src/ws/handler.broadcastMessage
+    events:
+      - websocket:
+          route: broadcast
     environment:
       REDIS_HOST: ${env:REDIS_HOST}
       REDIS_PASSWORD: ${env:REDIS_PASSWORD}
