@@ -1,0 +1,38 @@
+{
+  "name": "yyt-chat",
+  "version": "1.0.0",
+  "description": "Serverless webpack example using Typescript",
+  "main": "handler.js",
+  "scripts": {
+    "build": "sls package",
+    "start": "sls offline",
+    "status": "sls info",
+    "deploy": "sls deploy"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.17",
+    "@types/node": "^8.0.57",
+    "@types/redis": "^2.8.10",
+    "aws-sdk": "^2.407.0",
+    "prettier": "^1.16.4",
+    "serverless": "^1.38.0",
+    "serverless-offline": "^4.5.1",
+    "serverless-webpack": "^5.1.1",
+    "source-map-support": "^0.5.6",
+    "ts-loader": "^4.2.0",
+    "tslint": "^5.12.1",
+    "typescript": "^2.9.2",
+    "webpack": "^4.5.0"
+  },
+  "author": "The serverless webpack authors (https://github.com/elastic-coders/serverless-webpack)",
+  "license": "MIT",
+  "dependencies": {
+    "hiredis": "^0.5.0",
+    "redis": "^2.8.0"
+  },
+  "prettier": {
+    "printWidth": 80,
+    "singleQuote": true,
+    "trailingComma": "all"
+  }
+}

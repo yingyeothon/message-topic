@@ -1,0 +1,54 @@
+service:
+  name: yyt-chat
+
+plugins:
+  - serverless-webpack
+  - serverless-offline
+
+provider:
+  name: aws
+  runtime: nodejs8.10
+  region: ap-northeast-2
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - 'execute-api:ManageConnections'
+      Resource:
+        - 'arn:aws:execute-api:*:*:**/@connections/*'
+
+functions:
+  redisInfo:
+    handler: handler.redisInfo
+    events:
+      - http:
+          method: get
+          path: redis
+    environment:
+      REDIS_HOST: ${env:REDIS_HOST}
+      REDIS_PASSWORD: ${env:REDIS_PASSWORD}
+  connection:
+    handler: handler.connection
+    events:
+      - websocket:
+          route: $connect
+      - websocket:
+          route: $disconnect
+    environment:
+      REDIS_HOST: ${env:REDIS_HOST}
+      REDIS_PASSWORD: ${env:REDIS_PASSWORD}
+  defaultMessages:
+    handler: handler.defaultMessages
+    events:
+      - websocket:
+          route: $default
+    environment:
+      REDIS_HOST: ${env:REDIS_HOST}
+      REDIS_PASSWORD: ${env:REDIS_PASSWORD}
+  sendMessage:
+    handler: handler.sendMessage
+    events:
+      - websocket:
+          route: sendMessage
+    environment:
+      REDIS_HOST: ${env:REDIS_HOST}
+      REDIS_PASSWORD: ${env:REDIS_PASSWORD}
