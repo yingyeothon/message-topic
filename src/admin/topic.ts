@@ -1,20 +1,11 @@
 import { APIGatewayProxyHandler } from 'aws-lambda';
 import { getTopicRepo } from '../data/topic';
+import { adminApi } from './adminapi';
 
-export const seeTopicMembers: APIGatewayProxyHandler = async req => {
-  const members = await getTopicRepo().getTopicMembers(
-    req.pathParameters.topic,
-  );
-  return {
-    statusCode: 200,
-    body: JSON.stringify(members),
-  };
-};
+export const seeTopicMembers: APIGatewayProxyHandler = adminApi(async event =>
+  getTopicRepo().getTopicMembers(event.pathParameters.topic),
+);
 
-export const deleteTopic: APIGatewayProxyHandler = async req => {
-  const deleted = await getTopicRepo().deleteTopic(req.pathParameters.topic);
-  return {
-    statusCode: 200,
-    body: JSON.stringify(deleted),
-  };
-};
+export const deleteTopic: APIGatewayProxyHandler = adminApi(async event =>
+  getTopicRepo().deleteTopic(event.pathParameters.topic),
+);

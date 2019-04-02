@@ -5,7 +5,9 @@ export const newApigwManagementApi = (event: APIGatewayProxyEvent) =>
   new AWS.ApiGatewayManagementApi({
     apiVersion: '2018-11-29',
     endpoint:
-      event.requestContext.domainName + '/' + event.requestContext.stage,
+      event.requestContext.domainName +
+      '/' +
+      (process.env.WS_URL || event.requestContext.stage),
   });
 
 export const replyApi = (event: APIGatewayProxyEvent) => {

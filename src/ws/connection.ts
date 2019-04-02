@@ -1,10 +1,33 @@
-import { APIGatewayProxyHandler } from 'aws-lambda';
-import { handshakeApi } from './wsapi';
+import { APIGatewayProxyHandler, APIGatewayProxyEvent } from 'aws-lambda';
+import fetch from 'node-fetch';
+import { headerApi, userApi } from './wsapi';
 import { getUserRepo } from '../data/user';
 import { replyApi } from '../utils/ws';
+import { printPromiseIgnoreError } from '../utils/inspect';
+import { header } from '../utils/header';
 
-export const connect: APIGatewayProxyHandler = handshakeApi(
+const authUrl = process.env.AUTH_URL;
+const authenticate = async (event: APIGatewayProxyEvent) => {
+  if (!authUrl) {
+    return;
+  }
+  const authToken = header(event.headers, 'X-Auth-Token');
+  const auth = await printPromiseIgnoreError(`Auth`, authToken)(
+    fetch(authUrl, {
+      method: 'post',
+      headers: {
+        'X-Auth-Token': authToken,
+      },
+    }).then<boolean>(r => r.json()),
+  );
+  if (!auth) {
+    throw new Error('Invalid Auth');
+  }
+};
+
+export const connect: APIGatewayProxyHandler = headerApi(
   async ({ user, connectionId, event }) => {
+    await authenticate(event);
     console.log(`UserHello`, `Event`, user, JSON.stringify(event, null, 2));
 
     const hello = await getUserRepo().userHello(user, connectionId);
@@ -12,7 +35,7 @@ export const connect: APIGatewayProxyHandler = handshakeApi(
   },
 );
 
-export const disconnect: APIGatewayProxyHandler = handshakeApi(
+export const disconnect: APIGatewayProxyHandler = userApi(
   async ({ user, connectionId, event }) => {
     console.log(`UserBye`, `Event`, user, JSON.stringify(event, null, 2));
 

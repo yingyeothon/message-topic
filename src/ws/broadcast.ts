@@ -1,10 +1,10 @@
 import { APIGatewayProxyHandler } from 'aws-lambda';
-import { userApi } from './wsapi';
+import { messageApi } from './wsapi';
 import { getUserRepo } from '../data/user';
 import { getTopicRepo } from '../data/topic';
 import { replyApi } from '../utils/ws';
 
-export const broadcastMessage: APIGatewayProxyHandler = userApi<{
+export const broadcastMessage: APIGatewayProxyHandler = messageApi<{
   action: 'broadcast';
   topic: string;
   payload: string;

@@ -1,5 +1,5 @@
 service:
-  name: yyt-chat
+  name: yyt-message-topic
 
 plugins:
   - serverless-webpack
@@ -9,6 +9,9 @@ provider:
   name: aws
   runtime: nodejs8.10
   region: ap-northeast-2
+  stage: production
+  tracing:
+    lambda: true
   iamRoleStatements:
     - Effect: Allow
       Action:
@@ -24,6 +27,7 @@ functions:
           method: get
           path: redis/{topic}
     environment:
+      ADMIN_SECRET: ${env:ADMIN_SECRET}
       REDIS_HOST: ${env:REDIS_HOST}
       REDIS_PASSWORD: ${env:REDIS_PASSWORD}
   deleteTopic:
@@ -33,8 +37,10 @@ functions:
           method: delete
           path: redis/{topic}
     environment:
+      ADMIN_SECRET: ${env:ADMIN_SECRET}
       REDIS_HOST: ${env:REDIS_HOST}
       REDIS_PASSWORD: ${env:REDIS_PASSWORD}
+
   connect:
     handler: src/ws/connection.connect
     events:
@@ -43,6 +49,8 @@ functions:
     environment:
       REDIS_HOST: ${env:REDIS_HOST}
       REDIS_PASSWORD: ${env:REDIS_PASSWORD}
+      AUTH_URL: ${env:AUTH_URL}
+      WS_URL: ${env:WS_URL}
   disconnect:
     handler: src/ws/connection.disconnect
     events:
@@ -51,6 +59,7 @@ functions:
     environment:
       REDIS_HOST: ${env:REDIS_HOST}
       REDIS_PASSWORD: ${env:REDIS_PASSWORD}
+      WS_URL: ${env:WS_URL}
   defaultMessages:
     handler: src/ws/connection.defaultMessages
     events:
@@ -59,6 +68,7 @@ functions:
     environment:
       REDIS_HOST: ${env:REDIS_HOST}
       REDIS_PASSWORD: ${env:REDIS_PASSWORD}
+      WS_URL: ${env:WS_URL}
   subscribeTopic:
     handler: src/ws/topic.subscribeTopic
     events:
@@ -67,6 +77,7 @@ functions:
     environment:
       REDIS_HOST: ${env:REDIS_HOST}
       REDIS_PASSWORD: ${env:REDIS_PASSWORD}
+      WS_URL: ${env:WS_URL}
   unsubscribeTopic:
     handler: src/ws/topic.unsubscribeTopic
     events:
@@ -75,6 +86,7 @@ functions:
     environment:
       REDIS_HOST: ${env:REDIS_HOST}
       REDIS_PASSWORD: ${env:REDIS_PASSWORD}
+      WS_URL: ${env:WS_URL}
   broadcastMessage:
     handler: src/ws/broadcast.broadcastMessage
     events:
@@ -83,3 +95,4 @@ functions:
     environment:
       REDIS_HOST: ${env:REDIS_HOST}
       REDIS_PASSWORD: ${env:REDIS_PASSWORD}
+      WS_URL: ${env:WS_URL}

@@ -1,9 +1,9 @@
 import { APIGatewayProxyHandler } from 'aws-lambda';
-import { userApi } from './wsapi';
+import { messageApi } from './wsapi';
 import { getTopicRepo, TopicRepo } from '../data/topic';
 import { printPromiseRethrowError } from '../utils/inspect';
 
-export const subscribeTopic: APIGatewayProxyHandler = userApi<{
+export const subscribeTopic: APIGatewayProxyHandler = messageApi<{
   action: 'subscribe';
   topic: string;
 }>(async ({ user, message }) => {
@@ -20,7 +20,7 @@ export const subscribeTopic: APIGatewayProxyHandler = userApi<{
   };
 });
 
-export const unsubscribeTopic: APIGatewayProxyHandler = userApi<{
+export const unsubscribeTopic: APIGatewayProxyHandler = messageApi<{
   action: 'unsubscribe';
   topic: string;
 }>(async ({ user, message }) => {
