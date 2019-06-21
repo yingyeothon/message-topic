@@ -7,7 +7,7 @@ export const newApigwManagementApi = (event: APIGatewayProxyEvent) =>
     endpoint:
       event.requestContext.domainName +
       '/' +
-      (process.env.WS_URL || event.requestContext.stage),
+      (process.env.API_PATH || event.requestContext.stage),
   });
 
 export const replyApi = (event: APIGatewayProxyEvent) => {

@@ -18,6 +18,11 @@ provider:
         - 'execute-api:ManageConnections'
       Resource:
         - 'arn:aws:execute-api:*:*:**/@connections/*'
+  environment:
+    REDIS_HOST: ${env:REDIS_HOST}
+    REDIS_PASSWORD: ${env:REDIS_PASSWORD}
+    AUTH_URL: ${env:AUTH_URL}
+    API_PATH: ${env:API_PATH}
 
 functions:
   seeTopicMembers:
@@ -28,8 +33,6 @@ functions:
           path: redis/{topic}
     environment:
       ADMIN_SECRET: ${env:ADMIN_SECRET}
-      REDIS_HOST: ${env:REDIS_HOST}
-      REDIS_PASSWORD: ${env:REDIS_PASSWORD}
   deleteTopic:
     handler: src/admin/topic.deleteTopic
     events:
@@ -38,61 +41,34 @@ functions:
           path: redis/{topic}
     environment:
       ADMIN_SECRET: ${env:ADMIN_SECRET}
-      REDIS_HOST: ${env:REDIS_HOST}
-      REDIS_PASSWORD: ${env:REDIS_PASSWORD}
 
   connect:
     handler: src/ws/connection.connect
     events:
       - websocket:
           route: $connect
-    environment:
-      REDIS_HOST: ${env:REDIS_HOST}
-      REDIS_PASSWORD: ${env:REDIS_PASSWORD}
-      AUTH_URL: ${env:AUTH_URL}
-      WS_URL: ${env:WS_URL}
   disconnect:
     handler: src/ws/connection.disconnect
     events:
       - websocket:
           route: $disconnect
-    environment:
-      REDIS_HOST: ${env:REDIS_HOST}
-      REDIS_PASSWORD: ${env:REDIS_PASSWORD}
-      WS_URL: ${env:WS_URL}
   defaultMessages:
     handler: src/ws/connection.defaultMessages
     events:
       - websocket:
           route: $default
-    environment:
-      REDIS_HOST: ${env:REDIS_HOST}
-      REDIS_PASSWORD: ${env:REDIS_PASSWORD}
-      WS_URL: ${env:WS_URL}
   subscribeTopic:
     handler: src/ws/topic.subscribeTopic
     events:
       - websocket:
           route: subscribe
-    environment:
-      REDIS_HOST: ${env:REDIS_HOST}
-      REDIS_PASSWORD: ${env:REDIS_PASSWORD}
-      WS_URL: ${env:WS_URL}
   unsubscribeTopic:
     handler: src/ws/topic.unsubscribeTopic
     events:
       - websocket:
           route: unsubscribe
-    environment:
-      REDIS_HOST: ${env:REDIS_HOST}
-      REDIS_PASSWORD: ${env:REDIS_PASSWORD}
-      WS_URL: ${env:WS_URL}
   broadcastMessage:
     handler: src/ws/broadcast.broadcastMessage
     events:
       - websocket:
           route: broadcast
-    environment:
-      REDIS_HOST: ${env:REDIS_HOST}
-      REDIS_PASSWORD: ${env:REDIS_PASSWORD}
-      WS_URL: ${env:WS_URL}
