@@ -1,5 +1,8 @@
 import * as AWS from 'aws-sdk';
 import { APIGatewayProxyEvent } from 'aws-lambda';
+import install from './apigatewaymanagementapi';
+
+install(AWS);
 
 export const newApigwManagementApi = (event: APIGatewayProxyEvent) =>
   new AWS.ApiGatewayManagementApi({
